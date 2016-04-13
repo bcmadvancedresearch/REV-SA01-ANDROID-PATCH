@@ -1,0 +1,27 @@
+From 7df91a6d2d1e977d8a18d7e2494ff3d4c0837308 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Fri, 26 Sep 2014 18:07:52 +0800
+Subject: [PATCH 04/20] Disable KeyGuard
+
+    Disable KeyGuard
+---
+ .../base/core/java/com/android/internal/widget/LockPatternUtils.java   | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/frameworks/base/core/java/com/android/internal/widget/LockPatternUtils.java b/frameworks/base/core/java/com/android/internal/widget/LockPatternUtils.java
+index 8602260..ee66c63 100644
+--- a/frameworks/base/core/java/com/android/internal/widget/LockPatternUtils.java
++++ b/frameworks/base/core/java/com/android/internal/widget/LockPatternUtils.java
+@@ -458,7 +458,8 @@ public class LockPatternUtils {
+      * @return true if lock screen is can be disabled
+      */
+     public boolean isLockScreenDisabled() {
+-        return !isSecure() && getLong(DISABLE_LOCKSCREEN_KEY, 0) != 0;
++		// Disable KeyGuard
++		return true;
+     }
+ 
+     /**
+-- 
+1.9.1
+
