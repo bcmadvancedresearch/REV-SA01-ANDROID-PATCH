@@ -1,0 +1,42 @@
+From 738af2d685b1fe89ef675675958cd9519f40dc38 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Fri, 14 Nov 2014 17:55:57 +0800
+Subject: [PATCH 08/20] Disable Freescale OTA function
+
+---
+ device/fsl/imx6/imx6.mk                                               | 3 +--
+ device/fsl/smarc/overlay/packages/apps/Settings/res/values/config.xml | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/device/fsl/imx6/imx6.mk b/device/fsl/imx6/imx6.mk
+index 2bba885..76d41d2 100644
+--- a/device/fsl/imx6/imx6.mk
++++ b/device/fsl/imx6/imx6.mk
+@@ -14,9 +14,8 @@ PRODUCT_PACKAGES += \
+ 	Gallery		    			\
+ 	SoundRecorder				\
+ 	Camera					\
+-        LegacyCamera                            \
++	LegacyCamera                            \
+ 	Email					\
+-	FSLOta					\
+ 	CactusPlayer                            \
+ 	WfdSink                                 \
+ 	wfd                                     \
+diff --git a/device/fsl/smarc/overlay/packages/apps/Settings/res/values/config.xml b/device/fsl/smarc/overlay/packages/apps/Settings/res/values/config.xml
+index 5380d2d..f27d864 100644
+--- a/device/fsl/smarc/overlay/packages/apps/Settings/res/values/config.xml
++++ b/device/fsl/smarc/overlay/packages/apps/Settings/res/values/config.xml
+@@ -15,7 +15,7 @@
+ -->
+ 
+ <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+-    <string name="additional_system_update" translatable="false">com.fsl.android.ota</string>
+-    <string name="additional_system_update_menu" translatable="false">com.fsl.android.ota.OtaAppActivity</string>
++	<string name="additional_system_update" translatable="false">com.ota.smarcota</string>
++	<string name="additional_system_update_menu" translatable="false">com.ota.smarcota.OTAActivity</string>
+ 
+ </resources>
+-- 
+1.9.1
+
