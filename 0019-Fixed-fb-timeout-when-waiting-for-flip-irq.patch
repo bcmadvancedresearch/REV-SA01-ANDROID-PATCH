@@ -1,0 +1,43 @@
+From 74a490885be392e3ae2cf33fea2c6be91b317f72 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Wed, 2 Sep 2015 17:38:31 +0800
+Subject: [PATCH 19/20] Fixed fb timeout when waiting for flip irq.
+
+---
+ device/fsl/smarc/BoardConfig.mk                            | 4 ++--
+ kernel_imx/arch/arm/configs/imx6_smarc_p_android_defconfig | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/device/fsl/smarc/BoardConfig.mk b/device/fsl/smarc/BoardConfig.mk
+index f038c6d..3cceacf 100644
+--- a/device/fsl/smarc/BoardConfig.mk
++++ b/device/fsl/smarc/BoardConfig.mk
+@@ -93,10 +93,10 @@ endif
+ endif
+ 
+ # VGA + HDMI Setting
+-BOARD_KERNEL_CMDLINE := console=ttymxc0,115200 init=/init video=mxcfb0:dev=lcd,LCD_WVGA,bpp=32 video=mxcfb1:hdmi,1280x720M@60,bpp=32 fbmem=30M fb0base=0x27b00000 vmalloc=400M androidboot.console=ttymxc0 androidboot.hardware=freescale
++BOARD_KERNEL_CMDLINE := console=ttymxc0,115200 init=/init video=mxcfb0:dev=lcd,LCD_WVGA,bpp=32 video=mxcfb1:hdmi,1280x720M@60,bpp=32 fbmem=30M vmalloc=400M androidboot.console=ttymxc0 androidboot.hardware=freescale
+ 
+ #LVDS + HDMI Setting
+-#BOARD_KERNEL_CMDLINE := console=ttymxc0,115200 init=/init video=mxcfb0:dev=ldb,VGA,bpp=32 video=mxcfb1:hdmi,1280x720M@60,bpp=32 fbmem=30M fb0base=0x27b00000 vmalloc=400M androidboot.console=ttymxc0 androidboot.hardware=freescale
++#BOARD_KERNEL_CMDLINE := console=ttymxc0,115200 init=/init video=mxcfb0:dev=ldb,VGA,bpp=32 video=mxcfb1:hdmi,1280x720M@60,bpp=32 fbmem=30M vmalloc=400M androidboot.console=ttymxc0 androidboot.hardware=freescale
+ 
+ ifeq ($(TARGET_USERIMAGES_USE_UBIFS),true)
+ #UBI boot command line.
+diff --git a/kernel_imx/arch/arm/configs/imx6_smarc_p_android_defconfig b/kernel_imx/arch/arm/configs/imx6_smarc_p_android_defconfig
+index f75a914..27110f0 100644
+--- a/kernel_imx/arch/arm/configs/imx6_smarc_p_android_defconfig
++++ b/kernel_imx/arch/arm/configs/imx6_smarc_p_android_defconfig
+@@ -345,7 +345,7 @@ CONFIG_MACH_MX6_SMARC_P=y
+ CONFIG_USB_EHCI_ARC_H1=y
+ CONFIG_USB_FSL_ARC_OTG=y
+ # CONFIG_MX6_INTER_LDO_BYPASS is not set
+-CONFIG_MX6_CLK_FOR_BOOTUI_TRANS=y
++# CONFIG_MX6_CLK_FOR_BOOTUI_TRANS is not set
+ CONFIG_MX6_IR=y
+ CONFIG_ISP1504_MXC=y
+ # CONFIG_MXC_IRQ_PRIOR is not set
+-- 
+1.9.1
+
