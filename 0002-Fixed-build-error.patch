@@ -1,0 +1,42 @@
+From fde0ecf97e24cf18b0541d111c6a6ff9b07ee61d Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Fri, 12 Sep 2014 16:29:01 +0800
+Subject: [PATCH 02/20] Fixed build error.
+
+    Fixed build error.
+---
+ build/core/Makefile | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/build/core/Makefile b/build/core/Makefile
+index 01ba8de..2eb528d 100644
+--- a/build/core/Makefile
++++ b/build/core/Makefile
+@@ -765,7 +765,6 @@ endif
+ ifneq ($(strip $(TARGET_BOOTLOADER_CONFIG)),)
+ BOOTLOADER_CROSS_TOOLCHAIN := `pwd`/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
+ BOOTLOADER_ENV := ARCH=arm CROSS_COMPILE=$(BOOTLOADER_CROSS_TOOLCHAIN)
+-HOST_PROCESSOR := $(shell cat /proc/cpuinfo | grep processor | wc -l)
+ TARGET_BOOTLOADER_IMAGE := $(PRODUCT_OUT)/u-boot.bin
+ 
+ BOOTLOADER_PATH := bootable/bootloader/uboot-imx/
+@@ -791,7 +790,6 @@ endif
+ ifneq ($(strip $(TARGET_NO_KERNEL)),true)
+ KERNEL_CROSS_TOOLCHAIN := `pwd`/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-
+ KERNEL_ENV := ARCH=arm CROSS_COMPILE=$(KERNEL_CROSS_TOOLCHAIN)
+-HOST_PROCESSOR := $(shell cat /proc/cpuinfo | grep processor | wc -l)
+ INSTALLED_KERNEL_TARGET := $(PRODUCT_OUT)/kernel
+ TARGET_PREBUILT_KERNEL := $(PRODUCT_OUT)/kernel
+ KERNEL_CONFIGURE := kernel_imx/.config
+@@ -811,7 +809,7 @@ $(TARGET_KERNEL_CONFIGURE): kernel_imx/arch/arm/configs/$(TARGET_KERNEL_DEFCONF)
+ 	install -D $(KERNEL_CONFIGURE) $(TARGET_KERNEL_CONFIGURE)
+ 
+ $(TARGET_PREBUILT_KERNEL): $(TARGET_KERNEL_CONFIGURE)
+-	$(MAKE) -C kernel_imx -j$(HOST_PROCESSOR) uImage $(KERNEL_ENV)
++	$(MAKE) -C kernel_imx uImage $(KERNEL_ENV)
+ 	install -D $(KERNEL_UIMAGE)  $(PRODUCT_OUT)/uImage
+ 	install -D $(KERNEL_ZIMAGE)  $(PRODUCT_OUT)/kernel
+ 
+-- 
+1.9.1
+
