@@ -1,0 +1,34 @@
+From 4541e7375bed8d214ac64ead3525a1ac9edfb916 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Mon, 1 Dec 2014 11:01:33 +0800
+Subject: [PATCH 05/20] Fixed ISL1208 can not write at first time.
+
+---
+ kernel_imx/drivers/rtc/rtc-isl1208.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/kernel_imx/drivers/rtc/rtc-isl1208.c b/kernel_imx/drivers/rtc/rtc-isl1208.c
+index da8beb8..00ff8bf 100644
+--- a/kernel_imx/drivers/rtc/rtc-isl1208.c
++++ b/kernel_imx/drivers/rtc/rtc-isl1208.c
+@@ -663,9 +663,15 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		goto exit_unregister;
+ 	}
+ 
+-	if (rc & ISL1208_REG_SR_RTCF)
++	if (rc & ISL1208_REG_SR_RTCF) {
++		u8 regs[1];
++
+ 		dev_warn(&client->dev, "rtc power failure detected, "
+-			 "please set clock.\n");
++			"please set clock.\n");
++		regs[0] = ISL1208_REG_SR_WRTC;
++		isl1208_i2c_set_regs(client, 7, regs, 1);
++		isl1208_i2c_set_regs(client, 0, regs, 1);
++	}
+ 
+ 	rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
+ 	if (rc)
+-- 
+1.9.1
+
