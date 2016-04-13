@@ -1,0 +1,24 @@
+From 563c9c69841bb03746c5a676e449b4b9e00f4e99 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Thu, 5 Feb 2015 16:12:53 +0800
+Subject: [PATCH 11/20] Remove AesLIB.
+
+---
+ device/fsl/imx6/imx6.mk | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/device/fsl/imx6/imx6.mk b/device/fsl/imx6/imx6.mk
+index b65abcd..9d9d7da 100644
+--- a/device/fsl/imx6/imx6.mk
++++ b/device/fsl/imx6/imx6.mk
+@@ -16,7 +16,6 @@ PRODUCT_PACKAGES += \
+ 	Camera					\
+ 	LegacyCamera                            \
+ 	Email					\
+-	libAesLIB				\
+ 	HdmiDualPlayback			\
+ 	CactusPlayer                            \
+ 	WfdSink                                 \
+-- 
+1.9.1
+
