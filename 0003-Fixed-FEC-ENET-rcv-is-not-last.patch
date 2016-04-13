@@ -1,0 +1,40 @@
+From a16250c668a5357fb460eaaec43619cac83ff9ec Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Thu, 25 Sep 2014 14:17:44 +0800
+Subject: [PATCH 03/20] Fixed FEC ENET: rcv is not +last
+
+    Fixed FEC ENET: rcv is not +last
+---
+ kernel_imx/drivers/net/fec.c | 3 +++
+ kernel_imx/drivers/net/fec.h | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/kernel_imx/drivers/net/fec.c b/kernel_imx/drivers/net/fec.c
+index 7d792e8..21e7952 100644
+--- a/kernel_imx/drivers/net/fec.c
++++ b/kernel_imx/drivers/net/fec.c
+@@ -1674,6 +1674,9 @@ fec_restart(struct net_device *dev, int duplex)
+ 		writel(OPT_FRAME_SIZE | 0x06, fep->hwp + FEC_R_CNTRL);
+ 		writel(0x0, fep->hwp + FEC_X_CNTRL);
+ 	}
++#ifdef FEC_FTRL
++	writel(PKT_MAXBUF_SIZE, fep->hwp + FEC_FTRL);
++#endif
+ 	fep->full_duplex = duplex;
+ 
+ 	/* Set MII speed */
+diff --git a/kernel_imx/drivers/net/fec.h b/kernel_imx/drivers/net/fec.h
+index 0c26c6c..c2c9152 100644
+--- a/kernel_imx/drivers/net/fec.h
++++ b/kernel_imx/drivers/net/fec.h
+@@ -49,6 +49,7 @@
+ #define FEC_R_FIFO_RSEM		0x194 /* Receive FIFO section empty threshold */
+ #define FEC_R_FIFO_RAEM		0x198 /* Receive FIFO almost empty threshold */
+ #define FEC_R_FIFO_RAFL		0x19c /* Receive FIFO almost full threshold */
++#define FEC_FTRLi			0x1b0 /* Frame truncation receive length*/
+ #define FEC_MIIGSK_CFGR		0x300 /* MIIGSK Configuration reg */
+ #define FEC_MIIGSK_ENR		0x308 /* MIIGSK Enable reg */
+ 
+-- 
+1.9.1
+
