@@ -1,0 +1,33 @@
+From bacbf160386f7050bf92ae77c33284a6c6c7d485 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Tue, 2 Jun 2015 10:48:54 +0800
+Subject: [PATCH 17/20] Fixed RTC can not work.
+
+---
+ kernel_imx/arch/arm/configs/imx6_smarc_android_defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel_imx/arch/arm/configs/imx6_smarc_android_defconfig b/kernel_imx/arch/arm/configs/imx6_smarc_android_defconfig
+index 837f0f2..59f615b 100644
+--- a/kernel_imx/arch/arm/configs/imx6_smarc_android_defconfig
++++ b/kernel_imx/arch/arm/configs/imx6_smarc_android_defconfig
+@@ -336,6 +336,7 @@ CONFIG_MACH_MX6Q_SABRESD=y
+ CONFIG_MACH_MX6Q_SABREAUTO=y
+ CONFIG_MACH_MX6Q_HDMIDONGLE=y
+ CONFIG_MACH_MX6_SMARC=y
++# CONFIG_MACH_MX6_SMARC_P is not set
+ 
+ #
+ # MX6 Options:
+@@ -2558,7 +2559,7 @@ CONFIG_RTC_DRV_RX8010=y
+ # CONFIG_RTC_DRV_MSM6242 is not set
+ # CONFIG_RTC_MXC is not set
+ # CONFIG_RTC_DRV_MXC_V2 is not set
+-CONFIG_RTC_DRV_SNVS=y
++# CONFIG_RTC_DRV_SNVS is not set
+ # CONFIG_RTC_DRV_BQ4802 is not set
+ # CONFIG_RTC_DRV_RP5C01 is not set
+ # CONFIG_RTC_DRV_V3020 is not set
+-- 
+1.9.1
+
