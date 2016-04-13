@@ -1,0 +1,43 @@
+From 7734504cff456526e81f9c57afb52b5826fe6e3f Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Fri, 13 Feb 2015 16:25:16 +0800
+Subject: [PATCH 12/20] Fixed HDMI Audio bug.
+
+---
+ kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c b/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c
+index 443bc99..93ab929 100644
+--- a/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c
++++ b/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c
+@@ -167,7 +167,7 @@ static struct fsl_mxc_hdmi_platform_data hdmi_data = {
+ 
+ static struct fsl_mxc_hdmi_core_platform_data hdmi_core_data = {
+     .ipu_id = 0,
+-    .disp_id = 1,
++    .disp_id = 0,
+ };
+ 
+ struct imx_vout_mem
+@@ -213,7 +213,7 @@ static struct ipuv3_fb_platform_data smarc_fb_data[] = {
+ 	.interface_pix_fmt = IPU_PIX_FMT_RGB24,
+ 	.mode_str = "LCD_WVGA",
+ 	.default_bpp = 32,
+-	.int_clk = true,
++	.int_clk = false,
+ 	.late_init = false,
+ 	},
+ 	{
+@@ -238,7 +238,7 @@ static struct ipuv3_fb_platform_data smarc_fb_data[] = {
+ 
+ static struct fsl_mxc_lcd_platform_data lcdif_data = {
+ 	.ipu_id = 0,
+-	.disp_id = 0,
++	.disp_id = 1,
+ 	.default_ifmt = IPU_PIX_FMT_BGR24,
+ };
+ 
+-- 
+1.9.1
+
