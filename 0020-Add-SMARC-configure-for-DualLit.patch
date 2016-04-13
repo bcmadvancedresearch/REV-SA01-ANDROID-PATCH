@@ -1,0 +1,261 @@
+From afb9319a985ddc83dccaa547909f8f7a67d8e1c0 Mon Sep 17 00:00:00 2001
+From: Gary Hsu <gary_hsu@avalue.com.tw>
+Date: Wed, 20 Jan 2016 10:22:00 +0800
+Subject: [PATCH 20/20] Add SMARC configure for DualLit Add SMARC configure for
+ Solo-512M Add MMC support MLC and SLC Fixed HDMI Audio bug
+
+---
+ bootable/bootloader/uboot-imx/Makefile             |  2 ++
+ .../board/freescale/mx6q_smarc/flash_header.S      | 21 +++++++++++++++++++
+ bootable/bootloader/uboot-imx/drivers/mmc/mmc.c    |  9 ++++++++
+ .../uboot-imx/include/configs/mx6_smarc.h          |  2 +-
+ .../uboot-imx/include/configs/mx6dl_rev_sa01.h     | 24 ++++++++++++++++++++++
+ .../include/configs/mx6solo_rev_sa01_512.h         | 24 ++++++++++++++++++++++
+ bootable/bootloader/uboot-imx/include/mmc.h        |  1 +
+ bootable/bootloader/uboot-imx/run.sh               | 10 +++++++++
+ device/fsl/smarc/BoardConfig.mk                    |  2 +-
+ kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c      |  4 ++--
+ 10 files changed, 95 insertions(+), 4 deletions(-)
+ create mode 100644 bootable/bootloader/uboot-imx/include/configs/mx6dl_rev_sa01.h
+ create mode 100644 bootable/bootloader/uboot-imx/include/configs/mx6solo_rev_sa01_512.h
+
+diff --git a/bootable/bootloader/uboot-imx/Makefile b/bootable/bootloader/uboot-imx/Makefile
+index d9ce491..06dc8d5 100644
+--- a/bootable/bootloader/uboot-imx/Makefile
++++ b/bootable/bootloader/uboot-imx/Makefile
+@@ -3328,6 +3328,8 @@ mx6q_arm2_iram_config	: unconfig
+ ###################
+ mx6q_rev_sa01_config	\
+ mx6q_rev_sa01_2g_config	\
++mx6dl_rev_sa01_config	\
++mx6solo_rev_sa01_512_config \
+ mx6solo_rev_sa01_config : unconfig
+ 	@[ -z "$(findstring iram_,$@)" ] || \
+ 		{ echo "TEXT_BASE = 0x00907000" >$(obj)board/freescale/mx6q_smarc/config.tmp ; \
+diff --git a/bootable/bootloader/uboot-imx/board/freescale/mx6q_smarc/flash_header.S b/bootable/bootloader/uboot-imx/board/freescale/mx6q_smarc/flash_header.S
+index 4870cbf..9cc5259 100644
+--- a/bootable/bootloader/uboot-imx/board/freescale/mx6q_smarc/flash_header.S
++++ b/bootable/bootloader/uboot-imx/board/freescale/mx6q_smarc/flash_header.S
+@@ -108,10 +108,17 @@ MXC_DCD_ITEM(27, MMDC_P0_BASE_ADDR + 0x800, 0xA1390003)
+ MXC_DCD_ITEM(28, MMDC_P0_BASE_ADDR + 0x80c, 0x001F001F)
+ MXC_DCD_ITEM(29, MMDC_P0_BASE_ADDR + 0x810, 0x001F001F)
+ 
++#ifdef  NEW_VERSION_SMARC
+ MXC_DCD_ITEM(30, MMDC_P0_BASE_ADDR + 0x83c, 0x4234022C)
+ MXC_DCD_ITEM(31, MMDC_P0_BASE_ADDR + 0x840, 0x02100218)
+ MXC_DCD_ITEM(32, MMDC_P0_BASE_ADDR + 0x848, 0x42444846)
+ MXC_DCD_ITEM(33, MMDC_P0_BASE_ADDR + 0x850, 0x38342C36)
++#else
++MXC_DCD_ITEM(30, MMDC_P0_BASE_ADDR + 0x83c, 0x4224021F)
++MXC_DCD_ITEM(31, MMDC_P0_BASE_ADDR + 0x840, 0x020C020F)
++MXC_DCD_ITEM(32, MMDC_P0_BASE_ADDR + 0x848, 0x4F504D4D)
++MXC_DCD_ITEM(33, MMDC_P0_BASE_ADDR + 0x850, 0x41322E31)
++#endif
+ 
+ MXC_DCD_ITEM(34, MMDC_P0_BASE_ADDR + 0x81c, 0x33333333)
+ MXC_DCD_ITEM(35, MMDC_P0_BASE_ADDR + 0x820, 0x33333333)
+@@ -122,7 +129,11 @@ MXC_DCD_ITEM(38, MMDC_P0_BASE_ADDR + 0x8b8, 0x00000800)
+ 
+ MXC_DCD_ITEM(39, MMDC_P0_BASE_ADDR + 0x004, 0x0002002D)
+ MXC_DCD_ITEM(40, MMDC_P0_BASE_ADDR + 0x008, 0x00333030)
++#ifdef  NEW_VERSION_SMARC
+ MXC_DCD_ITEM(41, MMDC_P0_BASE_ADDR + 0x00c, 0x676B5333)
++#else
++MXC_DCD_ITEM(41, MMDC_P0_BASE_ADDR + 0x00c, 0x3F435313)
++#endif
+ 
+ MXC_DCD_ITEM(42, MMDC_P0_BASE_ADDR + 0x010, 0xB66E8B63)
+ MXC_DCD_ITEM(43, MMDC_P0_BASE_ADDR + 0x014, 0x01FF00DB)
+@@ -131,8 +142,18 @@ MXC_DCD_ITEM(44, MMDC_P0_BASE_ADDR + 0x018, 0x00001740)
+ MXC_DCD_ITEM(45, MMDC_P0_BASE_ADDR + 0x01c, 0x00008000)
+ MXC_DCD_ITEM(46, MMDC_P0_BASE_ADDR + 0x02c, 0x000026d2)
+ MXC_DCD_ITEM(47, MMDC_P0_BASE_ADDR + 0x030, 0x006B1023)
++#ifdef  NEW_VERSION_SMARC
+ MXC_DCD_ITEM(48, MMDC_P0_BASE_ADDR + 0x040, 0x00000027)
++#else
++MXC_DCD_ITEM(48, MMDC_P0_BASE_ADDR + 0x040, 0x00000017)
++#endif
++
++#ifdef  NEW_VERSION_SMARC
+ MXC_DCD_ITEM(49, MMDC_P0_BASE_ADDR + 0x000, 0x84190000)
++#else
++MXC_DCD_ITEM(49, MMDC_P0_BASE_ADDR + 0x000, 0x83190000)
++#endif
++
+ MXC_DCD_ITEM(50, MMDC_P0_BASE_ADDR + 0x01c, 0x04008032)
+ MXC_DCD_ITEM(51, MMDC_P0_BASE_ADDR + 0x01c, 0x00008033)
+ MXC_DCD_ITEM(52, MMDC_P0_BASE_ADDR + 0x01c, 0x00048031)
+diff --git a/bootable/bootloader/uboot-imx/drivers/mmc/mmc.c b/bootable/bootloader/uboot-imx/drivers/mmc/mmc.c
+index efb6537..3ab5dc1 100644
+--- a/bootable/bootloader/uboot-imx/drivers/mmc/mmc.c
++++ b/bootable/bootloader/uboot-imx/drivers/mmc/mmc.c
+@@ -1335,7 +1335,12 @@ int mmc_startup(struct mmc *mmc)
+ 	if (!IS_SD(mmc) && (mmc->version >= MMC_VERSION_4)) {
+ 		/* check  ext_csd version and capacity */
+ 		err = mmc_send_ext_csd(mmc, ext_csd);
++		#ifdef CONFIG_EMMC_MLC
+ 		if (!err & (ext_csd[192] >= 2)) {
++		#else
++		if (!err & (ext_csd[192] >= 2) &&
++			(mmc->ocr & OCR_ACCESS_MODE) == OCR_ACCESS_BY_SECTOR){
++		#endif
+ 			/*
+ 			 * According to the JEDEC Standard, the value of
+ 			 * ext_csd's capacity is valid if the value is more
+@@ -1344,8 +1349,12 @@ int mmc_startup(struct mmc *mmc)
+ 			capacity = ext_csd[212] << 0 | ext_csd[213] << 8 |
+ 				   ext_csd[214] << 16 | ext_csd[215] << 24;
+ 			capacity *= 512;
++			#ifdef CONFIG_EMMC_MLC
+ 			if ((capacity >> 20) > 2 * 1024)
+ 				mmc->capacity = capacity;
++			#else
++			mmc->capacity = capacity;
++			#endif
+ 		}
+ 
+ 		/*
+diff --git a/bootable/bootloader/uboot-imx/include/configs/mx6_smarc.h b/bootable/bootloader/uboot-imx/include/configs/mx6_smarc.h
+index d0877cd..f6de87e 100644
+--- a/bootable/bootloader/uboot-imx/include/configs/mx6_smarc.h
++++ b/bootable/bootloader/uboot-imx/include/configs/mx6_smarc.h
+@@ -52,7 +52,7 @@
+ #define CONFIG_SETUP_MEMORY_TAGS
+ #define CONFIG_INITRD_TAG
+ #define CONFIG_MXC_GPIO
+-#define	CONFIG_SPLASH_SCREEN
++#define CONFIG_EMMC_MLC
+ 
+ /*
+  * Size of malloc() pool
+diff --git a/bootable/bootloader/uboot-imx/include/configs/mx6dl_rev_sa01.h b/bootable/bootloader/uboot-imx/include/configs/mx6dl_rev_sa01.h
+new file mode 100644
+index 0000000..fcb116b
+--- /dev/null
++++ b/bootable/bootloader/uboot-imx/include/configs/mx6dl_rev_sa01.h
+@@ -0,0 +1,24 @@
++#ifndef	SMARC_SOLO_REV_SA01_CONFIG
++#define	SMARC_SOLO_REV_SA01_CONFIG
++#include "mx6_rev-sa01.h"
++
++#define CONFIG_MX6DL
++#define CONFIG_MX6DL_DDR3
++#define CONFIG_MX6SOLO_SMARC
++#define	NEW_VERSION_SMARC
++#define	CONFIG_USING_ANDROID
++
++#ifdef	CONFIG_USING_ANDROID
++#include "mx6_rev_sa01_android.h"
++#define	CONFIG_SYS_PROMPT	"MX6 DL SMARC Android > "
++#else
++#define CONFIG_SYS_PROMPT	"MX6 DL SMARC U-Boot > "
++#endif
++
++
++#ifdef	NEW_VERSION_SMARC
++#define	PHYS_SDRAM_1_SIZE	(1u * 1024 * 1024 * 1024)
++#else
++#define	PHYS_SDRAM_1_SIZE	(1u * 512 * 1024 * 1024)
++#endif
++#endif
+diff --git a/bootable/bootloader/uboot-imx/include/configs/mx6solo_rev_sa01_512.h b/bootable/bootloader/uboot-imx/include/configs/mx6solo_rev_sa01_512.h
+new file mode 100644
+index 0000000..2719cab
+--- /dev/null
++++ b/bootable/bootloader/uboot-imx/include/configs/mx6solo_rev_sa01_512.h
+@@ -0,0 +1,24 @@
++#ifndef	SMARC_SOLO_REV_SA01_CONFIG
++#define	SMARC_SOLO_REV_SA01_CONFIG
++#include "mx6_rev-sa01.h"
++
++#define CONFIG_MX6DL
++#define CONFIG_MX6DL_DDR3
++#define CONFIG_DDR_32BIT
++#define CONFIG_MX6SOLO_SMARC
++#define	CONFIG_USING_ANDROID
++
++#ifdef	CONFIG_USING_ANDROID
++#include "mx6_rev_sa01_android.h"
++#define	CONFIG_SYS_PROMPT	"MX6 Solo SMARC Android > "
++#else
++#define CONFIG_SYS_PROMPT	"MX6 Solo SMARC U-Boot > "
++#endif
++
++
++#ifdef	NEW_VERSION_SMARC
++#define	PHYS_SDRAM_1_SIZE	(1u * 1024 * 1024 * 1024)
++#else
++#define	PHYS_SDRAM_1_SIZE	(1u * 512 * 1024 * 1024)
++#endif
++#endif
+diff --git a/bootable/bootloader/uboot-imx/include/mmc.h b/bootable/bootloader/uboot-imx/include/mmc.h
+index 769fb92..43430a1 100644
+--- a/bootable/bootloader/uboot-imx/include/mmc.h
++++ b/bootable/bootloader/uboot-imx/include/mmc.h
+@@ -139,6 +139,7 @@
+ #define OCR_HCS			0x40000000
+ #define OCR_VOLTAGE_MASK	0x007FFF80
+ #define OCR_ACCESS_MODE		0x60000000
++#define OCR_ACCESS_BY_SECTOR   (1 << 30)
+ 
+ /* UHS-I related defines */
+ #define SD_SWITCH_18V	0x01000000
+diff --git a/bootable/bootloader/uboot-imx/run.sh b/bootable/bootloader/uboot-imx/run.sh
+index 6308b19..ecb508f 100755
+--- a/bootable/bootloader/uboot-imx/run.sh
++++ b/bootable/bootloader/uboot-imx/run.sh
+@@ -27,6 +27,16 @@ if [ $1 == "rev-sa01_solo" ]; then
+ 	JOBS=$2
+ fi
+ 
++if [ $1 == "rev-sa01_solo-512" ]; then
++	make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE mx6solo_rev_sa01_512_config
++	JOBS=$2
++fi
++
++if [ $1 == "rev-sa01_dl" ]; then
++	make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE mx6dl_rev_sa01_config
++	JOBS=$2
++fi
++
+ if [ $1 == "android" ]; then
+ 	make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE mx6q_sabresd_android_config
+ 	JOBS=$2
+diff --git a/device/fsl/smarc/BoardConfig.mk b/device/fsl/smarc/BoardConfig.mk
+index 3cceacf..4fa8c8b 100644
+--- a/device/fsl/smarc/BoardConfig.mk
++++ b/device/fsl/smarc/BoardConfig.mk
+@@ -120,7 +120,7 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+ #define consumer IR HAL support
+ IMX6_CONSUMER_IR_HAL := true
+ 
+-TARGET_BOOTLOADER_CONFIG := 6q2g:mx6q_rev_sa01_2g_config 6q:mx6q_rev_sa01_config 6dl:mx6solo_rev_sa01_config
++TARGET_BOOTLOADER_CONFIG := 6q2g:mx6q_rev_sa01_2g_config 6q:mx6q_rev_sa01_config 6solo:mx6solo_rev_sa01_config 6solo512:mx6solo_rev_sa01_512_config 6dl:mx6dl_rev_sa01_config
+ 
+ 
+ BOARD_SEPOLICY_DIRS := \
+diff --git a/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c b/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c
+index 54b0ad6..6ecd019 100644
+--- a/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c
++++ b/kernel_imx/arch/arm/mach-mx6/smarc/rev_sa01.c
+@@ -166,7 +166,7 @@ static struct fsl_mxc_hdmi_platform_data hdmi_data = {
+ };
+ 
+ static struct fsl_mxc_hdmi_core_platform_data hdmi_core_data = {
+-	.ipu_id = 0,
++	.ipu_id = 1,
+ 	.disp_id = 1,
+ };
+ 
+@@ -218,7 +218,7 @@ static struct ipuv3_fb_platform_data smarc_fb_data[] = {
+         .interface_pix_fmt = IPU_PIX_FMT_RGB24,
+         .mode_str = "1920x1080M@60",
+         .default_bpp = 32,
+-        .int_clk = false,
++        .int_clk = true,
+         .late_init = false,
+         },
+ };
+-- 
+1.9.1
+
