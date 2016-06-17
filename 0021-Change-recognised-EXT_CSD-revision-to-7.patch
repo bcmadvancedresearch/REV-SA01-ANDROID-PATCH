@@ -1,0 +1,25 @@
+From d14633cf83a1a42645858239cdba96b9fd197947 Mon Sep 17 00:00:00 2001
+From: Bingru Tsai <ben_tsai@avalue.com.tw>
+Date: Fri, 17 Jun 2016 11:09:15 +0800
+Subject: [PATCH 1/1] Change recognised EXT_CSD revision to 7
+
+---
+ kernel_imx/drivers/mmc/core/mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel_imx/drivers/mmc/core/mmc.c b/kernel_imx/drivers/mmc/core/mmc.c
+index 0130294..645e5d5 100644
+--- a/kernel_imx/drivers/mmc/core/mmc.c
++++ b/kernel_imx/drivers/mmc/core/mmc.c
+@@ -260,7 +260,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 
+ 	card->ext_csd.rev = ext_csd[EXT_CSD_REV];
+ 	/* workaround: support emmc 4.5 cards to work at emmc 4.4 mode */
+-	if (card->ext_csd.rev > 6) {
++	if (card->ext_csd.rev > 8) {
+ 		printk(KERN_ERR "%s: unrecognised EXT_CSD revision %d\n",
+ 			mmc_hostname(card->host), card->ext_csd.rev);
+ 		err = -EINVAL;
+-- 
+1.9.1
+
